@@ -1,6 +1,28 @@
-# Emotion Classification — Bidirectional LSTM
+# Analyzing the Role of Emotions in Elections using Bi-Directional LSTM
 
-Classifies text into **6 emotions**: anger · joy · sadness · fear · love · surprise
+> This codebase is the official implementation of the following IEEE-published paper:
+>
+> **"Analyzing the Role of Emotions in Elections using Bi-Directional LSTM"**
+> Rajini A., Chakravadhanula Naga Pranav, Santi Rohit Rao, Mummadi Sai Prasanna
+> Bhavan's Vivekananda College of Science, Humanities and Commerce (OU), Secunderabad, India
+> 📄 [View on IEEE Xplore](https://ieeexplore.ieee.org/document/10426511)
+
+---
+
+## Citation
+
+If you use this code, please cite the original paper:
+
+```bibtex
+@inproceedings{rajini2024emotions,
+  title     = {Analyzing the Role of Emotions in Elections using Bi-Directional LSTM},
+  author    = {Rajini, A. and Chakravadhanula, Naga Pranav and Santi, Rohit Rao and Mummadi, Sai Prasanna},
+  booktitle = {IEEE Xplore},
+  year      = {2024},
+  doi       = {10.1109/10426511},
+  url       = {https://ieeexplore.ieee.org/document/10426511}
+}
+```
 
 ---
 
@@ -27,38 +49,12 @@ emotion-lstm/
 pip install -r requirements.txt
 ```
 
-### 2. Prepare data
-
-**`data/train.txt`** — one sample per line, semicolon-separated:
-```
-i feel happy today;joy
-this makes me so angry;anger
-```
-
-**`data/Data.csv`** — must contain a `Speech` column:
-```csv
-Speech
-I really miss my family.
-This is the best day ever!
-```
-
-### 3. Train
+### 2. Train
 ```bash
 python train.py --train data/train.txt --test data/Data.csv --output models/
 ```
 
-Optional overrides:
-```bash
-python train.py \
-  --train data/train.txt \
-  --test  data/Data.csv  \
-  --epochs 15            \
-  --batch_size 64        \
-  --dropout 0.4          \
-  --lstm_units 128
-```
-
-### 4. Predict on new text
+### 3. Predict
 ```bash
 # Single string
 python predict.py \
@@ -70,46 +66,12 @@ python predict.py \
 python predict.py \
   --model     models/best_model.keras \
   --tokenizer models/tokenizer.pkl    \
-  --csv data/new_speeches.csv         \
-  --col Speech                        \
-  --output results.csv
+  --csv       data/speeches.csv       \
+  --output    results.csv
 ```
 
 ---
 
-## Model Architecture
+## License
 
-| Layer | Details |
-|---|---|
-| Embedding | vocab_size × 100 |
-| Bidirectional LSTM | 64 units (×2 directions) |
-| Dropout | 0.3 |
-| Dense | 32 units, ReLU |
-| Dropout | 0.3 |
-| Dense (output) | 6 units, Softmax |
-
----
-
-## Key fixes vs original notebook
-
-| Issue | Fix |
-|---|---|
-| Hardcoded local Windows paths | Relative paths + CLI arguments |
-| EarlyStopping on `val_loss` with no validation data | Added `validation_split=0.1` |
-| No model persisted after training | `ModelCheckpoint` saves `best_model.keras` |
-| No regularization → potential overfitting | Added `Dropout(0.3)` layers |
-| No tokenizer saved → can't run inference later | `tokenizer.pkl` saved via `pickle` |
-| No confidence scores | `np.max(softmax_output)` added to output |
-
----
-
-## Supported Emotions
-
-| Label | ID |
-|---|---|
-| anger | 0 |
-| joy | 1 |
-| sadness | 2 |
-| fear | 3 |
-| love | 4 |
-| surprise | 5 |
+Released for academic and research use. Please cite the original IEEE paper if you build upon this work.
